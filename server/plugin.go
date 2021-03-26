@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"net/http"
-	"strings"
 	"sync"
 
 	"github.com/mattermost/mattermost-server/v5/plugin"
@@ -23,17 +22,7 @@ type Plugin struct {
 
 // ServeHTTP demonstrates a plugin that handles HTTP requests by greeting the world.
 func (p *Plugin) ServeHTTP(c *plugin.Context, w http.ResponseWriter, r *http.Request) {
-	if strings.HasPrefix(r.URL.Path, "/vs") {
-		serveVs(c, w, r)
-		return
-	}
 	fmt.Fprint(w, "Hello, world!")
 }
 
 // See https://developers.mattermost.com/extend/plugins/server/reference/
-
-func serveVs(c *plugin.Context, w http.ResponseWriter, r *http.Request) {
-	dir := "/Users/koch/go/src/github.com/mattermost/mattermost-plugin-monaco/webapp/node_modules/monaco-editor/min"
-	p := dir + r.URL.Path
-	http.ServeFile(w, r, p)
-}

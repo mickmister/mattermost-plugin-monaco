@@ -41,8 +41,8 @@ const Editor: React.FC<EditorProps> = ({post, close}: EditorProps) => {
         <div>
             <div style={{
                 paddingTop: '35px',
-                paddingLeft: '28%',
-                paddingRight: '28%',
+                paddingLeft: '25%',
+                paddingRight: '25%',
             }}>
                 <div style={{marginBottom: '10px'}}>
                     <button

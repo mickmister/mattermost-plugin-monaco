@@ -3,6 +3,9 @@ import {Post} from 'mattermost-redux/types/posts';
 import {editPost} from 'mattermost-redux/actions/posts';
 import {useDispatch} from 'react-redux';
 
+import config from '@monaco-editor/loader/lib/es/config';
+config.paths.vs = '/plugins/monaco-editor/public/vs';
+
 import MonacoEditor from '@monaco-editor/react';
 
 type EditorProps = {

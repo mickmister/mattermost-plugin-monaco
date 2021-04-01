@@ -63,8 +63,10 @@
     "webpack-cli": "3.3.12"
   },
   "dependencies": {
+    "@monaco-editor/react": "4.1.0",
     "core-js": "3.6.5",
     "mattermost-redux": "5.27.0",
+    "monaco-editor": "0.23.0",
     "react": "16.13.1",
     "react-redux": "7.2.0",
     "redux": "4.0.5",

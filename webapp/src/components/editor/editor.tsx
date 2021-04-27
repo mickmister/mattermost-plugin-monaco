@@ -6,7 +6,9 @@ import {useDispatch} from 'react-redux';
 import config from '@monaco-editor/loader/lib/es/config';
 config.paths.vs = '/plugins/monaco-editor/public/vs';
 
-import MonacoEditor from '@monaco-editor/react';
+import MonacoEditor, {Monaco} from '@monaco-editor/react';
+
+import monokai from 'monaco-themes/themes/Monokai.json';
 
 type EditorProps = {
     post: Post;
@@ -17,6 +19,11 @@ const Editor: React.FC<EditorProps> = ({post, close}: EditorProps) => {
     const [text, setText] = React.useState<string>(post.message);
 
     const dispatch = useDispatch();
+
+    const onMount = (editor, monaco: Monaco) => {
+        monaco.editor.defineTheme('monokai', monokai);
+    };
+
     const savePost = () => {
         const postToSave = {
             ...post,
@@ -33,7 +40,7 @@ const Editor: React.FC<EditorProps> = ({post, close}: EditorProps) => {
     const [theme, setTheme] = React.useState('vs-dark');
 
     const toggleTheme = () => {
-        const newTheme = theme === 'vs-dark' ? 'light' : 'vs-dark';
+        const newTheme = theme === 'vs-dark' ? 'monokai' : 'vs-dark';
         setTheme(newTheme);
     }
 
@@ -69,6 +76,7 @@ const Editor: React.FC<EditorProps> = ({post, close}: EditorProps) => {
                 </div>
 
                 <MonacoEditor
+                    onMount={onMount}
                     height='90vh'
                     defaultLanguage='markdown'
                     value={text}

@@ -1,4 +1,3 @@
-import React from 'react';
 import {Store, Action} from 'redux';
 
 import {GlobalState} from 'mattermost-redux/types/store';
@@ -10,11 +9,12 @@ import {getChannel} from 'mattermost-redux/selectors/entities/channels';
 
 import manifest from './manifest';
 
-// eslint-disable-next-line import/no-unresolved
 import {PluginRegistry} from './types/mattermost-webapp';
 
-import FullScreenModal from './full_screen_modal/full_screen_modal';
-import Editor from './editor';
+import reducers from './redux/reducers';
+import {setActivePost} from './redux/actions';
+
+import EditorModal from './components/editor/editor_modal';
 
 const canEdit = (state: GlobalState, post: Post): boolean => {
     const config = state.entities.general.config;
@@ -27,16 +27,21 @@ const canEdit = (state: GlobalState, post: Post): boolean => {
 }
 
 export default class Plugin {
+    store: Store<GlobalState, Action<Record<string, unknown>>> = null as any;
     setActivePost = (post: Post) => {};
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-function
     public async initialize(registry: PluginRegistry | any, store: Store<GlobalState, Action<Record<string, unknown>>>) {
+        this.store = store;
+        registry.registerReducer(reducers);
+
+
         // @see https://developers.mattermost.com/extend/plugins/webapp/reference/
         registry.registerRootComponent(EditorModal);
 
         registry.registerPostDropdownMenuAction('Edit as code', (postID: string) => {
             const post = getPost(store.getState(), postID);
-            this.setActivePost(post);
+            this.store.dispatch(setActivePost(post));
         }, (postID: string) => {
             if (!postID) {
                 return false;
@@ -49,6 +54,44 @@ export default class Plugin {
 
             return canEdit(state, post);
         });
+
+        window.addEventListener('keydown', this.keyBindingListener);
+    }
+
+    public async uninitialize() {
+        window.removeEventListener('keydown', this.keyBindingListener);
+    }
+
+    keyBindingListener = (event: KeyboardEvent) => {
+        if (event.key !== 'Enter' && event.key !== 'j') {
+            return;
+        }
+
+        const cls = '.a11y--focused';
+        const focused = document.querySelector(cls);
+        if (!focused) {
+            return;
+        }
+
+        if (focused.getAttribute('data-testid') !== 'postView') {
+            return;
+        }
+
+        const postID = focused.id.split('_')[1];
+
+        if (event.key === 'j') {
+            this.store.dispatch({
+                type: 'jira_open_create_modal',
+                data: {
+                    postId: postID,
+                },
+            });
+            return;
+        }
+
+
+        const post = getPost(this.store.getState(), postID);
+        this.setActivePost(post);
     }
 }
 
@@ -61,25 +104,3 @@ declare global {
 const p = new Plugin();
 
 window.registerPlugin(manifest.id, p);
-
-const EditorModal: React.FC = () => {
-    const [activePost, setActivePost] = React.useState<Post | null>(null);
-    p.setActivePost = setActivePost;
-
-    if (!activePost) {
-        return null;
-    }
-
-    const close = () => setActivePost(null);
-    return (
-        <FullScreenModal
-            show={Boolean(activePost)}
-            onClose={close}
-        >
-            <Editor
-                post={activePost}
-                close={close}
-            />
-        </FullScreenModal>
-    );
-};

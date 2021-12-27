@@ -9,7 +9,7 @@ import {EditorState} from '../../types/editor_types';
 import RenderedMarkdown from './rendered_markdown';
 
 type Props = {
-    editorModalState: {editorState: EditorState, onSubmit: (text: string) => void};
+    editorModalState: {editorState: EditorState, onTextChange: (text: string) => void};
 }
 
 export default function CustomEditorModalInner(props: Props) {
@@ -20,6 +20,11 @@ export default function CustomEditorModalInner(props: Props) {
 
     const [codeEditorState, setCodeEditorState] = useEditorState();
     const [savedCodeBlockIndex, setCodeBlockIndex] = useState(-1);
+
+    const onMarkdownTextChange = (content: string) => {
+        setMarkdownEditorState({content});
+        props.editorModalState.onTextChange(content);
+    }
 
     let editor: React.ReactNode;
 
@@ -42,7 +47,7 @@ export default function CustomEditorModalInner(props: Props) {
         const after = markdownContent.substring(end - 1);
 
         const newContent = before + codeBlockContent + after;
-        setMarkdownEditorState({content: newContent});
+        onMarkdownTextChange(newContent);
     };
 
     const clickedCodeBlock = (index: number) => {
@@ -86,6 +91,7 @@ export default function CustomEditorModalInner(props: Props) {
 
         editor = (
             <Editor
+                key={'Code ' + savedCodeBlockIndex}
                 {...editorProps}
             />
         );
@@ -94,12 +100,13 @@ export default function CustomEditorModalInner(props: Props) {
             cancel: () => dispatch(closeEditorModal(markdownEditorState.contentSource)),
             save: (text: string) => dispatch(closeEditorModal(text)),
             showFullScreenButton: false,
-            onTextChange: (content: string) => setMarkdownEditorState({content}),
+            onTextChange: (content: string) => onMarkdownTextChange(content),
             ...markdownEditorState,
         };
 
         editor = (
             <Editor
+                key={'Markdown'}
                 {...editorProps}
             />
         );
@@ -115,7 +122,7 @@ export default function CustomEditorModalInner(props: Props) {
     return (
         <div>
             <h2>
-                {showCodeBlock ? 'Code Block Editor' : 'Markdown Editor'}
+                {showCodeBlock ? `Code Block Editor - ${codeEditorState.language}` : 'Markdown Editor'}
             </h2>
             <div>
                 <div style={{display: 'inline-block', width: '50%', padding: '20px'}}>

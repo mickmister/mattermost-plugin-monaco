@@ -5,10 +5,6 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import {CSSTransition} from 'react-transition-group';
 
-import './full_screen_modal.scss';
-
-import CloseIcon from './close_icon';
-
 // This must be on sync with the animation time in ./full_screen_modal.scss
 const ANIMATION_DURATION = 100;
 

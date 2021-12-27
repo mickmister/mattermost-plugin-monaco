@@ -35,6 +35,17 @@ export default class Plugin {
         )
     }
 
+    public uninitialize() {
+        if (window.disposeMonacoUserAutocomplete) {
+            window.disposeMonacoUserAutocomplete();
+            window.disposeMonacoUserAutocomplete = undefined;
+        }
+
+        if (window.disposeMonacoChannelAutocomplete) {
+            window.disposeMonacoChannelAutocomplete();
+            window.disposeMonacoChannelAutocomplete = undefined;
+        }
+    }
 }
 
 declare global {

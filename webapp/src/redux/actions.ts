@@ -14,12 +14,12 @@ export function setActivePost(post: Post | null) {
     };
 }
 
-export function showEditorModal(editorState: EditorState, onSubmit: (text: string) => void) {
+export function showEditorModal(editorState: EditorState, onTextChange: (text: string) => void) {
     return {
         type: ActionTypes.SHOW_EDITOR_MODAL,
         data: {
             editorState,
-            onSubmit,
+            onTextChange,
         },
     };
 }
@@ -28,7 +28,7 @@ export function closeEditorModal(text: string) {
     return (dispatch, getState) => {
         const modalState = getEditorModalState(getState());
 
-        modalState?.onSubmit(text);
+        modalState?.onTextChange(text);
 
         return dispatch({
             type: ActionTypes.HIDE_EDITOR_MODAL,

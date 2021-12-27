@@ -8,7 +8,7 @@ import CustomEditorModalInner from './custom_editor_modal_inner';
 import {EditorState} from '../../types/editor_types';
 
 export default function CustomEditorModal() {
-    const editorModalState: {editorState: EditorState, onSubmit: (text: string) => void} | null = useSelector(getEditorModalState);
+    const editorModalState: {editorState: EditorState, onTextChange: (text: string) => void} | null = useSelector(getEditorModalState);
 
     // need to use openModal
 

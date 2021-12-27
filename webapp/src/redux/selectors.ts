@@ -7,7 +7,7 @@ function getPluginState(state) {
     return state['plugins-' + pluginID] || {};
 }
 
-export function getEditorModalState(state): {editorState: EditorState, onSubmit: (text: string) => void} | null {
+export function getEditorModalState(state): {editorState: EditorState, onTextChange: (text: string) => void} | null {
     return getPluginState(state).editorModalState;
 }
 

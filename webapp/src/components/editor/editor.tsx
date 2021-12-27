@@ -4,10 +4,15 @@ import config from '@monaco-editor/loader/lib/es/config';
 config.paths.vs = '/plugins/monaco-editor/public/vs';
 
 import MonacoEditor from '@monaco-editor/react';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
+
+import {Client4} from 'mattermost-redux/client'
+import {getCurrentTeamId} from 'mattermost-redux/selectors/entities/teams';
 
 import {showEditorModal} from '../../redux/actions';
 import {EditorState} from '../../types/editor_types';
+
+import registerAutocomplete from '../autocomplete/autocomplete';
 
 // import * as monaco from 'monaco-editor';
 
@@ -20,7 +25,12 @@ export type EditorProps = EditorState & {
 
 export default function Editor(props: EditorProps) {
     const [dirty, setDirty] = useState(false);
+
     const dispatch = useDispatch();
+
+    const teamId = useSelector(getCurrentTeamId);
+    const autocompleteUsers = (term: string) => Client4.autocompleteUsers(term, teamId, '');
+    const autocompleteChannels = (term: string) => Client4.autocompleteChannels(teamId, term);
 
     const showFullScreen = () => {
         dispatch(showEditorModal({
@@ -44,6 +54,7 @@ export default function Editor(props: EditorProps) {
 
     const buttonStyle = {
         cursor: 'pointer',
+        margin: '5px',
     };
 
     const save = () => props.save(props.content);
@@ -89,19 +100,27 @@ export default function Editor(props: EditorProps) {
         </div>
     );
 
-    const handleEditorDidMount = (editor: any) => {
+    const handleEditorDidMount = (editor: any, monaco: any) => {
         const lines = props.content.split('\n');
         const numLines = lines.length;
         const lastLine = lines[numLines - 1];
         const lastColumnNum = lastLine.length + 1;
 
         editor.focus();
-        // editor.revealLine(numLines);
         editor.setPosition({column: lastColumnNum, lineNumber: numLines});
 
-        // editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_S, () => {
+        editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_S, () => {
+            props.save(editor.getValue());
+        });
+
+        // editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_ENTER, () => {
         //     props.save(editor.getValue());
         // });
+
+        // this pointer to autocompleteUsers will not have an updated team id if the user switches teams
+        // though the component unmounts when the team switches so maybe that's not a problem?
+
+        registerAutocomplete(monaco, autocompleteUsers, autocompleteChannels);
     };
 
     const onChange = (text?: string) => {
@@ -119,6 +138,7 @@ export default function Editor(props: EditorProps) {
             onMount={handleEditorDidMount}
             options={{
                 scrollBeyondLastLine: false,
+                wordWrap: 'on',
                 padding: {
                     bottom: 200,
                 },
@@ -132,6 +152,7 @@ export default function Editor(props: EditorProps) {
     return (
         <div style={style}>
             {buttons}
+            <div style={{height: '10px'}}/>
             {monacoEditor}
         </div>
     );

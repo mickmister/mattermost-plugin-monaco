@@ -6,7 +6,7 @@ import {setActivePost} from '../../redux/actions';
 
 import FullScreenModal from '../full_screen_modal/full_screen_modal';
 
-import Editor from './editor';
+import Editor from './deno_editor';
 
 const EditorModal: React.FC = () => {
     const activePost = useSelector(getActivePost);

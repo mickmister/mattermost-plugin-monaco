@@ -1,91 +1,176 @@
-import React from 'react';
-import {Post} from 'mattermost-redux/types/posts';
-import {editPost} from 'mattermost-redux/actions/posts';
-import {useDispatch} from 'react-redux';
+import React, {useEffect, useState} from 'react';
 
 import config from '@monaco-editor/loader/lib/es/config';
 config.paths.vs = '/plugins/monaco-editor/public/vs';
 
-import MonacoEditor, {Monaco} from '@monaco-editor/react';
+import MonacoEditor from '@monaco-editor/react';
+import {useDispatch} from 'react-redux';
 
-import monokai from 'monaco-themes/themes/Monokai.json';
+import {showEditorModal} from '../../redux/actions';
+import {EditorState} from '../../types/editor_types';
 
-type EditorProps = {
-    post: Post;
-    close: () => void;
+// import * as monaco from 'monaco-editor';
+
+export type EditorProps = EditorState & {
+    save: (content: string) => void;
+    cancel: () => void;
+    onTextChange: (content: string) => void;
+    showFullScreenButton: boolean;
 }
 
-const Editor: React.FC<EditorProps> = ({post, close}: EditorProps) => {
-    const [text, setText] = React.useState<string>(post.message);
-
+export default function Editor(props: EditorProps) {
+    const [dirty, setDirty] = useState(false);
     const dispatch = useDispatch();
 
-    const onMount = (editor, monaco: Monaco) => {
-        monaco.editor.defineTheme('monokai', monokai);
+    const showFullScreen = () => {
+        dispatch(showEditorModal({
+            content: props.content,
+            contentSource: props.content,
+            language: 'markdown',
+        }, (text: string) => {
+            props.onTextChange(text);
+        }));
+    }
+
+    useEffect(() => {
+        if (props.content !== props.contentSource && !dirty) {
+            setDirty(true);
+        }
+    }, [props.content]);
+
+    const style: React.CSSProperties = {
+        border: 'solid 1px',
     };
 
-    const savePost = () => {
-        const postToSave = {
-            ...post,
-            message: text,
-        };
-        dispatch(editPost(postToSave));
-        close();
+    const buttonStyle = {
+        cursor: 'pointer',
+    };
+
+    const save = () => props.save(props.content);
+
+    const cancel = () => {
+        if (dirty) {
+            if (!window.confirm('Do you want to lose your unsaved changes?')) {
+                return;
+            }
+        }
+
+        props.cancel();
     }
 
-    const onChange = (text = '') => {
-        setText(text);
-    }
+    const buttons = (
+        <div>
+            <button
+                type='button'
+                className='btn btn-primary comment-btn'
+                onClick={save}
+                style={buttonStyle}
+            >
+                {'Save'}
+            </button>
+            <button
+                type='button'
+                className='btn btn-primary comment-btn'
+                onClick={cancel}
+                style={buttonStyle}
+            >
+                {'Cancel'}
+            </button>
+            {props.showFullScreenButton && (
+                <button
+                    type='button'
+                    className='btn btn-primary comment-btn'
+                    onClick={showFullScreen}
+                    style={buttonStyle}
+                >
+                    {'Full Screen'}
+                </button>
+            )}
+        </div>
+    );
 
-    const [theme, setTheme] = React.useState('vs-dark');
+    const handleEditorDidMount = (editor: any) => {
+        const lines = props.content.split('\n');
+        const numLines = lines.length;
+        const lastLine = lines[numLines - 1];
+        const lastColumnNum = lastLine.length + 1;
 
-    const toggleTheme = () => {
-        const newTheme = theme === 'vs-dark' ? 'monokai' : 'vs-dark';
-        setTheme(newTheme);
-    }
+        editor.focus();
+        // editor.revealLine(numLines);
+        editor.setPosition({column: lastColumnNum, lineNumber: numLines});
+
+        // editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_S, () => {
+        //     props.save(editor.getValue());
+        // });
+    };
+
+    const onChange = (text?: string) => {
+        props.onTextChange(text || '');
+    };
+
+    const editorHeight = getEditorHeight(props.content);
+    const monacoEditor = (
+        <MonacoEditor
+            height={editorHeight}
+            theme={'vs-dark'}
+            language={props.language}
+            value={props.content}
+            onChange={onChange}
+            onMount={handleEditorDidMount}
+            options={{
+                scrollBeyondLastLine: false,
+                padding: {
+                    bottom: 200,
+                },
+                minimap: {
+                    enabled: false
+                },
+            }}
+        />
+    );
 
     return (
-        <div>
-            <div style={{
-                paddingTop: '35px',
-                paddingLeft: '25%',
-                paddingRight: '25%',
-            }}>
-                <div style={{marginBottom: '10px'}}>
-                    <button
-                        type='button'
-                        className={'btn btn-danger'}
-                        onClick={close}
-                    >
-                        {'Cancel'}
-                    </button>
-                    <button
-                        type='button'
-                        className={'btn btn-primary'}
-                        onClick={toggleTheme}
-                    >
-                        {'Toggle Theme'}
-                    </button>
-                    <button
-                        type='button'
-                        className={'btn btn-primary'}
-                        onClick={savePost}
-                    >
-                        {'Save'}
-                    </button>
-                </div>
-
-                <MonacoEditor
-                    onMount={onMount}
-                    height='90vh'
-                    defaultLanguage='markdown'
-                    value={text}
-                    onChange={onChange}
-                    theme={theme}
-                />
-            </div>
+        <div style={style}>
+            {buttons}
+            {monacoEditor}
         </div>
     );
 }
 
-export default Editor;
+export const useEditorState = (initial?: Partial<EditorState>): [EditorState, (newState: Partial<EditorState> | null) => void] => {
+    const original = {
+        content: '',
+        contentSource: '',
+        language: 'markdown',
+        ...initial,
+    };
+
+    const [state, setState] = useState(original);
+
+    return [state, (newState) => setState(previousState => {
+        if (!newState) {
+            return original;
+        }
+
+        return {
+            ...previousState,
+            ...newState,
+        }
+    })];
+};
+
+const getEditorHeight = (content: string): string => {
+    const LINE_HEIGHT = 18;
+    const CONTAINER_GUTTER = 10;
+
+    const minHeight = LINE_HEIGHT * 10 + CONTAINER_GUTTER;
+    const maxHeight = LINE_HEIGHT * 45 + CONTAINER_GUTTER;
+
+    const numLines = content.split('\n').length;
+    const extraLines = 10;
+    let editorHeight = (numLines + extraLines) * LINE_HEIGHT;
+
+    editorHeight = Math.max(minHeight, editorHeight);
+    editorHeight = Math.min(maxHeight, editorHeight);
+    return editorHeight + 'px';
+}

@@ -5,6 +5,8 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import {CSSTransition} from 'react-transition-group';
 
+import './full_screen_modal.scss';
+
 import CloseIcon from './close_icon';
 
 // This must be on sync with the animation time in ./full_screen_modal.scss
@@ -46,10 +48,6 @@ export default class FullScreenModal extends React.Component {
                 appear={true}
             >
                 <div className='FullScreenModal FullScreenModal--compact'>
-                    <CloseIcon
-                        className='close-x'
-                        onClick={this.close}
-                    />
                     {this.props.children}
                 </div>
             </CSSTransition>

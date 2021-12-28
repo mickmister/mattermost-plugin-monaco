@@ -11,6 +11,7 @@ import {fetchAndSetPreferences} from './redux/actions';
 
 import CustomEditor from './components/custom_editor/custom_editor';
 import CustomEditorModal from './components/custom_editor_modal/custom_editor_modal';
+import {setStoreForAutocomplete} from 'components/autocomplete/autocomplete';
 
 export default class Plugin {
     store: Store<GlobalState, Action<Record<string, unknown>>> = null as any;
@@ -30,9 +31,11 @@ export default class Plugin {
         registry.registerRootComponent(CustomEditorModal);
 
         registry.registerCustomEditorComponent(
-            'Code Editor',
+            'Code',
             CustomEditor,
-        )
+        );
+
+        setStoreForAutocomplete(store);
     }
 
     public uninitialize() {

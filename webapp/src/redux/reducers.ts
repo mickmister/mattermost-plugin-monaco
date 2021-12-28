@@ -3,8 +3,9 @@ import {combineReducers} from 'redux';
 import {Post} from 'mattermost-redux/types/posts';
 import {GenericAction} from 'mattermost-redux/types/actions';
 
+import {EditorState, UserPreferences} from 'types/monaco_plugin_types';
+
 import ActionTypes from './action_types';
-import {EditorState} from 'types/editor_types';
 
 function activePost(state: Post | null = null, action: GenericAction) {
     switch (action.type) {
@@ -24,10 +25,6 @@ function editorModalState(state: EditorState | null = null, action: GenericActio
         default:
             return state;
     }
-}
-
-type UserPreferences = {
-    theme: string;
 }
 
 function userPreferences(state: UserPreferences = {theme: 'vs-dark'}, action: GenericAction) {

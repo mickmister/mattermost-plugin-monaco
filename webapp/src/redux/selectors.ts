@@ -1,5 +1,4 @@
-import {Post} from 'mattermost-redux/types/posts';
-import {EditorState} from 'types/editor_types';
+import {EditorState, UserPreferences} from 'types/monaco_plugin_types';
 
 import {id as pluginID} from '../manifest';
 

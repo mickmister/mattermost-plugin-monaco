@@ -7,7 +7,7 @@ import {Team} from 'mattermost-redux/types/teams';
 import {getChannelsNameMapInCurrentTeam} from 'mattermost-redux/selectors/entities/channels';
 import {getCurrentTeam} from 'mattermost-redux/selectors/entities/teams';
 
-import {ChannelNamesMap} from '../../types/editor_types';
+import {ChannelNamesMap} from '../../types/monaco_plugin_types';
 
 import './rendered_markdown.scss';
 

@@ -5,7 +5,7 @@ import {getEditorModalState} from '../../redux/selectors';
 import FullScreenModal from '../full_screen_modal/full_screen_modal';
 import CustomEditorModalInner from './custom_editor_modal_inner';
 
-import {EditorState} from '../../types/editor_types';
+import {EditorState} from '../../types/monaco_plugin_types';
 
 export default function CustomEditorModal() {
     const editorModalState: {editorState: EditorState, onTextChange: (text: string) => void} | null = useSelector(getEditorModalState);

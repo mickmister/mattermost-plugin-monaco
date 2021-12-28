@@ -8,11 +8,14 @@ import {useDispatch, useSelector} from 'react-redux';
 
 import {Client4} from 'mattermost-redux/client'
 import {getCurrentTeamId} from 'mattermost-redux/selectors/entities/teams';
+import {getTheme} from 'mattermost-redux/selectors/entities/preferences';
 
 import {showEditorModal} from '../../redux/actions';
-import {EditorState} from '../../types/editor_types';
+import {EditorState} from '../../types/monaco_plugin_types';
 
 import registerAutocomplete from '../autocomplete/autocomplete';
+
+import {registerThemes} from '../../themes/themes';
 
 // import * as monaco from 'monaco-editor';
 
@@ -21,6 +24,7 @@ export type EditorProps = EditorState & {
     cancel: () => void;
     onTextChange: (content: string) => void;
     showFullScreenButton: boolean;
+    path?: string;
 }
 
 export default function Editor(props: EditorProps) {
@@ -28,9 +32,17 @@ export default function Editor(props: EditorProps) {
 
     const dispatch = useDispatch();
 
-    const teamId = useSelector(getCurrentTeamId);
-    const autocompleteUsers = (term: string) => Client4.autocompleteUsers(term, teamId, '');
-    const autocompleteChannels = (term: string) => Client4.autocompleteChannels(teamId, term);
+    const theme = useSelector(getTheme) as {codeTheme: string};
+
+    useEffect(() => {
+        if (props.content !== props.contentSource && !dirty) {
+            setDirty(true);
+        }
+    }, [props.content]);
+
+    useEffect(() => {
+        setDirty(false);
+    }, [props.path]);
 
     const showFullScreen = () => {
         dispatch(showEditorModal({
@@ -41,12 +53,6 @@ export default function Editor(props: EditorProps) {
             props.onTextChange(text);
         }));
     }
-
-    useEffect(() => {
-        if (props.content !== props.contentSource && !dirty) {
-            setDirty(true);
-        }
-    }, [props.content]);
 
     const style: React.CSSProperties = {
         border: 'solid 1px',
@@ -100,6 +106,11 @@ export default function Editor(props: EditorProps) {
         </div>
     );
 
+    const handleEditorWillMount = (monaco: any) => {
+        registerThemes(monaco);
+        registerAutocomplete(monaco);
+    }
+
     const handleEditorDidMount = (editor: any, monaco: any) => {
         const lines = props.content.split('\n');
         const numLines = lines.length;
@@ -113,14 +124,20 @@ export default function Editor(props: EditorProps) {
             props.save(editor.getValue());
         });
 
-        // editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_ENTER, () => {
-        //     props.save(editor.getValue());
-        // });
+        editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, () => {
+            alert('should send post');
+            // props.save(editor.getValue());
+        });
 
-        // this pointer to autocompleteUsers will not have an updated team id if the user switches teams
-        // though the component unmounts when the team switches so maybe that's not a problem?
+        // Use this to view all of the key bindings available. You can then disable them like the indent ones below we're disabling.
+        // console.log(editor._standaloneKeybindingService._getResolver()._defaultKeybindings);
 
-        registerAutocomplete(monaco, autocompleteUsers, autocompleteChannels);
+        // Make it so Cmd+[ and Cmd+] are still able to move the browser to previous and next page
+        editor._standaloneKeybindingService.addDynamicKeybinding('-editor.action.indentLines', null, () => {});
+        editor._standaloneKeybindingService.addDynamicKeybinding('-editor.action.outdentLines', null, () => {});
+
+        window.myMonaco = monaco;
+        window.myEditor = editor;
     };
 
     const onChange = (text?: string) => {
@@ -131,12 +148,17 @@ export default function Editor(props: EditorProps) {
     const monacoEditor = (
         <MonacoEditor
             height={editorHeight}
-            theme={'vs-dark'}
+            theme={theme.codeTheme}
+            // theme={'vs-dark'}
             language={props.language}
             value={props.content}
+            path={props.path}
             onChange={onChange}
             onMount={handleEditorDidMount}
+            beforeMount={handleEditorWillMount}
             options={{
+                wordBasedSuggestions: false,
+                renderLineHighlight: 'none',
                 scrollBeyondLastLine: false,
                 wordWrap: 'on',
                 padding: {

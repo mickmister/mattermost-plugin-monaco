@@ -12,3 +12,7 @@ export type ChannelNamesMap = {
         team_name?: string;
     } | Channel;
 };
+
+export type UserPreferences = {
+    theme: string;
+};

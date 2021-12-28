@@ -4,7 +4,7 @@ import {useDispatch} from 'react-redux';
 import {closeEditorModal} from '../../redux/actions';
 
 import Editor, {EditorProps, useEditorState} from '../editor/editor';
-import {EditorState} from '../../types/editor_types';
+import {EditorState} from '../../types/monaco_plugin_types';
 
 import RenderedMarkdown from './rendered_markdown';
 
@@ -20,6 +20,7 @@ export default function CustomEditorModalInner(props: Props) {
 
     const [codeEditorState, setCodeEditorState] = useEditorState();
     const [savedCodeBlockIndex, setCodeBlockIndex] = useState(-1);
+    const [randomStringToResetModel, setRandomString] = useState('');
 
     const onMarkdownTextChange = (content: string) => {
         setMarkdownEditorState({content});
@@ -66,6 +67,7 @@ export default function CustomEditorModalInner(props: Props) {
             language: language || 'markdown',
         });
 
+        setRandomString(makeRandomString());
         setCodeBlockIndex(index);
     }
 
@@ -86,12 +88,12 @@ export default function CustomEditorModalInner(props: Props) {
                 setCodeBlockContentInMarkdownContent(content);
                 setCodeEditorState({content});
             },
+            path: randomStringToResetModel,
             ...codeEditorState,
         };
 
         editor = (
             <Editor
-                key={'Code ' + savedCodeBlockIndex}
                 {...editorProps}
             />
         );
@@ -106,7 +108,6 @@ export default function CustomEditorModalInner(props: Props) {
 
         editor = (
             <Editor
-                key={'Markdown'}
                 {...editorProps}
             />
         );
@@ -140,3 +141,5 @@ const languageMap: Record<string, string> = {
     js: 'javascript',
     ts: 'typescript',
 };
+
+const makeRandomString = () => Array.from(Array(20), () => Math.floor(Math.random() * 36).toString(36)).join('');

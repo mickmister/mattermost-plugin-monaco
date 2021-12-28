@@ -1,51 +1,48 @@
+import {Monaco} from '@monaco-editor/react';
+import {Store} from 'redux';
+
 import {UserAutocomplete} from 'mattermost-redux/types/autocomplete';
 import {Channel} from 'mattermost-redux/types/channels';
+import {GlobalState} from 'mattermost-redux/types/store';
+import {getCurrentTeamId as getCurrentTeamIdRedux} from 'mattermost-redux/selectors/entities/teams';
+import {getCurrentUserId as getCurrentUserIdRedux} from 'mattermost-redux/selectors/entities/users';
 
-type AutocompleteItem = {
-    label: string;
-    kind: number;
-    insertText: string;
-    filterText: string;
-    range: Range;
+import {Client4} from 'mattermost-redux/client';
+
+let savedStore: Store<GlobalState, any>;
+
+export const setStoreForAutocomplete = (store: any) => {
+    savedStore = store;
 };
 
-type AutocompleteModel = {
-    getValueInRange: (range: Range) => string;
-};
+const autocompleteUsers = (term: string) => Client4.autocompleteUsers(term, getCurrentTeamId(), '');
+const autocompleteChannels = (term: string) => Client4.autocompleteChannels(getCurrentTeamId(), term);
 
-type Range = {
-    startLineNumber: number;
-    startColumn: number;
-    endLineNumber: number;
-    endColumn: number;
-};
-
-type AutocompleteConfig = {
-    triggerCharacters?: string[];
-    provideCompletionItems: (
-        model: AutocompleteModel,
-        position: {lineNumber: number; column: number},
-        token: any
-    ) => Promise<{
-        suggestions: AutocompleteItem[];
-        incomplete: boolean;
-    }>
+const getCurrentTeamId = (): string => {
+    return getCurrentTeamIdRedux(savedStore.getState());
 }
 
-type Monaco = {
-    languages: {
-        registerCompletionItemProvider: (language: string, config: AutocompleteConfig) => void;
-        CompletionItemKind: {
-            [kind: string]: number;
-        };
-    };
-};
+const getCurrentUserId = (): string => {
+    return getCurrentUserIdRedux(savedStore.getState());
+}
 
+let registeredAutocompleteForCurrentEditor = false;
 export default function registerAutocomplete(
     monaco: Monaco,
-    autocompleteUsers: (term: string) => Promise<UserAutocomplete>,
-    autocompleteChannels: (term: string) => Promise<Channel[]>,
 ) {
+    if (registeredAutocompleteForCurrentEditor) {
+        return;
+    }
+    registeredAutocompleteForCurrentEditor = true;
+
+    if (window.disposeMonacoUserAutocomplete) {
+        window.disposeMonacoUserAutocomplete();
+    }
+
+    if (window.disposeMonacoChannelAutocomplete) {
+        window.disposeMonacoChannelAutocomplete();
+    }
+
     const disposeMonacoUserAutocomplete = registerUserAutocomplete(monaco, autocompleteUsers);
     if (disposeMonacoUserAutocomplete?.dispose) {
         window.disposeMonacoUserAutocomplete = disposeMonacoUserAutocomplete.dispose;
@@ -58,10 +55,6 @@ export default function registerAutocomplete(
 }
 
 const registerUserAutocomplete = (monaco: Monaco, autocompleteUsers: (term: string) => Promise<UserAutocomplete>) => {
-    if (window.disposeMonacoUserAutocomplete) {
-        return;
-    }
-
     const trigger = '@';
     return monaco.languages.registerCompletionItemProvider('markdown', {
         triggerCharacters: [trigger],
@@ -69,41 +62,80 @@ const registerUserAutocomplete = (monaco: Monaco, autocompleteUsers: (term: stri
             const {range, term} = getAutocompleteMetadata(model, position, trigger);
             const data = await autocompleteUsers(term);
 
+            if (!data.users) {
+                return {incomplete: true, suggestions: []};
+            }
+
+            const users = data.users;
+
+            const usernameLimit = 25;
+            const maxUsernameLength =  Math.min(usernameLimit, Math.max(...users.map((u) => u.username.length)));
+
+            const currentUserId = getCurrentUserId();
+
             return {
                 incomplete: true,
-                suggestions: data.users.map((user) => ({
-                    label: `${trigger}${user.username} (${user.first_name} ${user.last_name})`,
-                    insertText: `${trigger}${user.username} `,
-                    filterText: `${trigger}${user.username}`,
-                    kind: monaco.languages.CompletionItemKind.Function,
-                    range: range,
-                })),
+                suggestions: users.map((user) => {
+                    const usernameDisplay = user.username.substring(0, maxUsernameLength).padEnd(maxUsernameLength, ' ');
+
+                    const userDetailsParts = [];
+                    if (user.first_name) {
+                        userDetailsParts.push(user.first_name);
+                    }
+                    if (user.last_name) {
+                        userDetailsParts.push(user.last_name);
+                    }
+                    if (user.id === currentUserId) {
+                        userDetailsParts.push('(you)');
+                    } else if (user.nickname) {
+                        userDetailsParts.push(`(${user.nickname})`);
+                    }
+
+                    const userDetailsDisplay = userDetailsParts.join(' ');
+
+                    return {
+                        label: `${trigger}${usernameDisplay}  ${userDetailsDisplay}`,
+                        insertText: `${trigger}${user.username} `,
+                        filterText: `${trigger}${user.username}`,
+                        kind: monaco.languages.CompletionItemKind.Function,
+                        range: range,
+                    };
+                }),
             };
         },
     });
 }
 
 const registerChannelAutocomplete = (monaco: Monaco, autocompleteChannels: (term: string) => Promise<Channel[]>) => {
-    if (window.disposeMonacoChannelAutocomplete) {
-        return;
-    }
-
     const trigger = '~';
     return monaco.languages.registerCompletionItemProvider('markdown', {
         triggerCharacters: [trigger],
         provideCompletionItems: async (model, position) => {
             const {range, term} = getAutocompleteMetadata(model, position, trigger);
-            const data = await autocompleteChannels(term);
+            const channels = await autocompleteChannels(term);
+
+            const displayNameLimit = 30;
+            const maxChannelDisplayNameLength = Math.min(displayNameLimit, Math.max(...channels.map((c) => c.display_name.length)));
 
             return {
                 incomplete: true,
-                suggestions: data.map((channel) => ({
-                    label: `${trigger}${channel.name} - ${channel.display_name}`,
-                    insertText: `${trigger}${channel.name} `,
-                    filterText: `${trigger}${channel.name}`,
-                    kind: monaco.languages.CompletionItemKind.Function,
-                    range: range,
-                })),
+                suggestions: channels.map((channel) => {
+                    let displayName = channel.display_name.substring(0, maxChannelDisplayNameLength)
+                    if (channel.display_name.length > displayNameLimit) {
+                        displayName = displayName.substring(0, displayNameLimit - 3) + '...';
+                    }
+
+                    displayName = displayName.padEnd(maxChannelDisplayNameLength, ' ');
+
+                    return {
+                        label: `${displayName}  ~${channel.name}`,
+                        documentation: channel.display_name,
+                        insertText: `${trigger}${channel.name} `,
+                        filterText: `${trigger}${channel.name}`,
+                        kind: monaco.languages.CompletionItemKind.Function,
+                        range: range,
+                    };
+                }),
             };
         },
     });

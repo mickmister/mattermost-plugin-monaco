@@ -1,4 +1,7 @@
-import React from 'react';
+import React, {useEffect} from 'react';
+import {useSelector} from 'react-redux';
+
+import {getCurrentChannelId} from 'mattermost-redux/selectors/entities/common';
 
 import Editor, {useEditorState} from 'components/editor/editor';
 
@@ -9,15 +12,24 @@ type Props = {
 }
 
 export default function CustomEditor(props: Props) {
-    const language = 'markdown';
-    const contentSource = props.value;
-    const content = props.value;
+    const [editorState, setEditorState] = useEditorState({
+        language: 'markdown',
+        content: props.value,
+        contentSource: props.value,
+    });
 
-    const [editorState, setEditorState] = useEditorState({language, contentSource, content});
+    const currentChannelId = useSelector(getCurrentChannelId);
+
+    useEffect(() => {
+        setEditorState({
+            content: props.value,
+            contentSource: props.value,
+        });
+    }, [currentChannelId]);
 
     const onTextChange = (content = '') => {
-        props.onChange({target: {value: content}} as any);
         setEditorState({content});
+        props.onChange({target: {value: content}} as any);
     };
 
     const cancel = () => {

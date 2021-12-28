@@ -8,10 +8,10 @@ config.paths.vs = '/plugins/monaco-editor/public/vs';
 
 import MonacoEditor from '@monaco-editor/react';
 
-import {getMonacoTheme} from '../../redux/selectors';
+import {setMonacoTheme} from 'redux_store/actions';
+import {getMonacoTheme} from 'redux_store/selectors';
 
-import ThemePicker from '../editor/theme-picker';
-import {setMonacoTheme} from 'redux/actions';
+// import ThemePicker from 'components/editor/theme-picker';
 
 type EditorProps = {
     post: Post;

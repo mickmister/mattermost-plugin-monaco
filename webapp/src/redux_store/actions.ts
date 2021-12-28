@@ -3,7 +3,7 @@ import {Client4} from 'mattermost-redux/client';
 
 import ActionTypes from './action_types';
 import {getEditorModalState, getUserPreferences} from './selectors';
-import {EditorState} from 'types/editor_types';
+import {EditorState} from 'types/monaco_plugin_types';
 
 const preferencesRoute = '/plugins/monaco-editor/preferences';
 

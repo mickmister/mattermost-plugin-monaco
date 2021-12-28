@@ -6,8 +6,8 @@ import manifest from './manifest';
 
 import {PluginRegistry} from './types/mattermost-webapp';
 
-import reducers from './redux/reducers';
-import {fetchAndSetPreferences} from './redux/actions';
+import reducers from './redux_store/reducers';
+import {fetchAndSetPreferences} from './redux_store/actions';
 
 import CustomEditor from './components/custom_editor/custom_editor';
 import CustomEditorModal from './components/custom_editor_modal/custom_editor_modal';

@@ -1,6 +1,6 @@
 import {EditorState, UserPreferences} from 'types/monaco_plugin_types';
 
-import {id as pluginID} from '../manifest';
+import {id as pluginID} from 'manifest';
 
 function getPluginState(state) {
     return state['plugins-' + pluginID] || {};

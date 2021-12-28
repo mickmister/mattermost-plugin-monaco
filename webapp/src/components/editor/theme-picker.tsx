@@ -3,7 +3,7 @@ import {useSelector} from 'react-redux';
 
 import {getTheme} from 'mattermost-redux/selectors/entities/preferences';
 
-import ReactSelectSetting from '../react_select_setting';
+import ReactSelectSetting from 'components/react_select_setting';
 
 const makeThemeOption = (theme: string) => {
     return {

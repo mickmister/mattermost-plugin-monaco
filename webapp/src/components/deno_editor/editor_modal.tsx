@@ -1,10 +1,10 @@
 import React from 'react';
 import {useDispatch, useSelector} from 'react-redux';
-import {getActivePost} from '../../redux/selectors';
 
-import {setActivePost} from '../../redux/actions';
+import {getActivePost} from 'redux_store/selectors';
+import {setActivePost} from 'redux_store/actions';
 
-import FullScreenModal from '../full_screen_modal/full_screen_modal';
+import FullScreenModal from 'components/full_screen_modal/full_screen_modal';
 
 import Editor from './deno_editor';
 

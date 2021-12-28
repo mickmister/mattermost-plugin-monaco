@@ -1,10 +1,10 @@
 import React, {useState} from 'react';
 import {useDispatch} from 'react-redux';
 
-import {closeEditorModal} from '../../redux/actions';
+import {closeEditorModal} from 'redux_store/actions';
 
-import Editor, {EditorProps, useEditorState} from '../editor/editor';
-import {EditorState} from '../../types/monaco_plugin_types';
+import Editor, {EditorProps, useEditorState} from 'components/editor/editor';
+import {EditorState} from 'types/monaco_plugin_types';
 
 import RenderedMarkdown from './rendered_markdown';
 

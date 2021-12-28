@@ -6,18 +6,14 @@ config.paths.vs = '/plugins/monaco-editor/public/vs';
 import MonacoEditor from '@monaco-editor/react';
 import {useDispatch, useSelector} from 'react-redux';
 
-import {Client4} from 'mattermost-redux/client'
-import {getCurrentTeamId} from 'mattermost-redux/selectors/entities/teams';
 import {getTheme} from 'mattermost-redux/selectors/entities/preferences';
 
-import {showEditorModal} from '../../redux/actions';
-import {EditorState} from '../../types/monaco_plugin_types';
+import {showEditorModal} from 'redux_store/actions';
+import {EditorState} from 'types/monaco_plugin_types';
 
-import registerAutocomplete from '../autocomplete/autocomplete';
+import registerAutocomplete from 'components/autocomplete/autocomplete';
 
-import {registerThemes} from '../../themes/themes';
-
-// import * as monaco from 'monaco-editor';
+import {registerThemes} from 'themes/themes';
 
 export type EditorProps = EditorState & {
     save: (content: string) => void;

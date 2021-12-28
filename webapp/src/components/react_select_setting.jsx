@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 
 import ReactSelect from 'react-select';
 
-import {getStyleForReactSelect} from '../utils/styles';
+import {getStyleForReactSelect} from 'utils/styles';
 
 export default class ReactSelectSetting extends React.PureComponent {
     static propTypes = {

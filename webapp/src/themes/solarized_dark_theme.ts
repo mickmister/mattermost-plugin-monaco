@@ -5,7 +5,7 @@ export default {
     "inherit": true,
     "rules": [
         {
-            "foreground": "586e75",
+            "foreground": "85b900",
             "token": "comment"
         },
         {
@@ -13,7 +13,7 @@ export default {
             "token": "string"
         },
         {
-            "foreground": "586e75",
+            "foreground": "85b900",
             "token": "string"
         },
         {
@@ -33,11 +33,11 @@ export default {
             "token": "variable.other"
         },
         {
-            "foreground": "859900",
+            "foreground": "6c71c4",
             "token": "keyword"
         },
         {
-            "foreground": "859900",
+            "foreground": "6c71c4",
             "token": "storage"
         },
         {
@@ -53,7 +53,7 @@ export default {
             "token": "entity.name.function"
         },
         {
-            "foreground": "859900",
+            "foreground": "6c71c4",
             "token": "punctuation.definition.variable"
         },
         {
@@ -94,15 +94,15 @@ export default {
             "token": "entity.name.tag"
         },
         {
-            "foreground": "586e75",
+            "foreground": "6c71c4",
             "token": "punctuation.definition.tag.html"
         },
         {
-            "foreground": "586e75",
+            "foreground": "6c71c4",
             "token": "punctuation.definition.tag.begin"
         },
         {
-            "foreground": "586e75",
+            "foreground": "6c71c4",
             "token": "punctuation.definition.tag.end"
         },
         {
@@ -118,11 +118,11 @@ export default {
             "token": "punctuation.separator.continuation"
         },
         {
-            "foreground": "859900",
+            "foreground": "6c71c4",
             "token": "support.type"
         },
         {
-            "foreground": "859900",
+            "foreground": "6c71c4",
             "token": "support.class"
         },
         {
@@ -166,7 +166,7 @@ export default {
             "token": "source.css"
         },
         {
-            "foreground": "586e75",
+            "foreground": "6c71c4",
             "token": "meta.selector.css"
         },
         {
@@ -198,15 +198,15 @@ export default {
             "token": "support.constant.color"
         },
         {
-            "foreground": "859900",
+            "foreground": "6c71c4",
             "token": "entity.name.tag.css"
         },
         {
-            "foreground": "586e75",
+            "foreground": "6c71c4",
             "token": "punctuation.separator.key-value.css"
         },
         {
-            "foreground": "586e75",
+            "foreground": "6c71c4",
             "token": "punctuation.terminator.rule.css"
         },
         {
@@ -289,7 +289,7 @@ export default {
             "token": "string.quoted.double.doctype.identifiers-and-DTDs.html"
         },
         {
-            "foreground": "839496",
+            "foreground": "e0e0e0",
             "fontStyle": "italic",
             "token": "comment.block.html"
         },
@@ -360,12 +360,12 @@ export default {
             "token": "source.css.embedded.html entity.name.tag.style.html"
         },
         {
-            "foreground": "839496",
+            "foreground": "e0e0e0",
             "fontStyle": "italic",
             "token": "source.css.embedded.html"
         },
         {
-            "foreground": "839496",
+            "foreground": "e0e0e0",
             "fontStyle": "italic",
             "token": "comment.block.html"
         },
@@ -386,21 +386,21 @@ export default {
             "token": "entity.name.function.ruby"
         },
         {
-            "foreground": "859900",
+            "foreground": "6c71c4",
             "fontStyle": "bold",
             "token": "keyword.control.ruby"
         },
         {
-            "foreground": "859900",
+            "foreground": "6c71c4",
             "fontStyle": "bold",
             "token": "keyword.control.def.ruby"
         },
         {
-            "foreground": "859900",
+            "foreground": "6c71c4",
             "token": "keyword.control.class.ruby"
         },
         {
-            "foreground": "859900",
+            "foreground": "6c71c4",
             "token": "meta.class.ruby"
         },
         {
@@ -408,7 +408,7 @@ export default {
             "token": "entity.name.type.class.ruby"
         },
         {
-            "foreground": "859900",
+            "foreground": "6c71c4",
             "token": "keyword.control.ruby"
         },
         {
@@ -416,7 +416,7 @@ export default {
             "token": "support.class.ruby"
         },
         {
-            "foreground": "859900",
+            "foreground": "6c71c4",
             "token": "keyword.other.special-method.ruby"
         },
         {
@@ -456,7 +456,7 @@ export default {
             "token": "keyword.control.import.include.php"
         },
         {
-            "foreground": "839496",
+            "foreground": "e0e0e0",
             "token": "text.html.ruby meta.tag.inline.any.html"
         },
         {
@@ -468,15 +468,15 @@ export default {
             "token": "text.html.ruby punctuation.definition.string.end"
         },
         {
-            "foreground": "839496",
+            "foreground": "e0e0e0",
             "token": "punctuation.definition.string.begin"
         },
         {
-            "foreground": "839496",
+            "foreground": "e0e0e0",
             "token": "punctuation.definition.string.end"
         },
         {
-            "foreground": "839496",
+            "foreground": "e0e0e0",
             "token": "support.class.php"
         },
         {
@@ -488,7 +488,7 @@ export default {
             "token": "keyword.operator.index-end.php"
         },
         {
-            "foreground": "586e75",
+            "foreground": "6c71c4",
             "token": "meta.array.php"
         },
         {
@@ -520,7 +520,7 @@ export default {
             "token": "keyword.other.new.php"
         },
         {
-            "foreground": "839496",
+            "foreground": "e0e0e0",
             "token": "keyword.operator.class"
         },
         {
@@ -540,15 +540,15 @@ export default {
             "token": "keyword.operator.class.php"
         },
         {
-            "foreground": "839496",
+            "foreground": "e0e0e0",
             "token": "punctuation.terminator.expression.php"
         },
         {
-            "foreground": "586e75",
+            "foreground": "6c71c4",
             "token": "meta.other.inherited-class.php"
         },
         {
-            "foreground": "859900",
+            "foreground": "6c71c4",
             "token": "storage.type.php"
         },
         {
@@ -556,23 +556,23 @@ export default {
             "token": "entity.name.function.php"
         },
         {
-            "foreground": "859900",
+            "foreground": "6c71c4",
             "token": "support.function.construct.php"
         },
         {
-            "foreground": "839496",
+            "foreground": "e0e0e0",
             "token": "entity.name.type.class.php"
         },
         {
-            "foreground": "839496",
+            "foreground": "e0e0e0",
             "token": "meta.function-call.php"
         },
         {
-            "foreground": "839496",
+            "foreground": "e0e0e0",
             "token": "meta.function-call.static.php"
         },
         {
-            "foreground": "839496",
+            "foreground": "e0e0e0",
             "token": "meta.function-call.object.php"
         },
         {
@@ -624,15 +624,15 @@ export default {
             "token": "meta.preprocessor.c.include punctuation.definition.string.end.c"
         },
         {
-            "foreground": "586e75",
+            "foreground": "6c71c4",
             "token": "support.function.C99.c"
         },
         {
-            "foreground": "586e75",
+            "foreground": "6c71c4",
             "token": "support.function.any-method.c"
         },
         {
-            "foreground": "586e75",
+            "foreground": "6c71c4",
             "token": "entity.name.function.c"
         },
         {
@@ -772,7 +772,7 @@ export default {
             "token": "variable.parameter.definition.label.latex"
         },
         {
-            "foreground": "859900",
+            "foreground": "6c71c4",
             "token": "support.function.be.latex"
         },
         {
@@ -796,19 +796,19 @@ export default {
             "token": "keyword.control.ref.latex"
         },
         {
-            "foreground": "586e75",
+            "foreground": "6c71c4",
             "token": "string.quoted.double.block.python"
         },
         {
-            "foreground": "859900",
+            "foreground": "6c71c4",
             "token": "storage.type.class.python"
         },
         {
-            "foreground": "859900",
+            "foreground": "6c71c4",
             "token": "storage.type.function.python"
         },
         {
-            "foreground": "859900",
+            "foreground": "6c71c4",
             "token": "storage.modifier.global.python"
         },
         {
@@ -824,7 +824,7 @@ export default {
             "token": "support.type.exception.python"
         },
         {
-            "foreground": "859900",
+            "foreground": "6c71c4",
             "token": "support.function.builtin.shell"
         },
         {
@@ -836,27 +836,27 @@ export default {
             "token": "source.shell"
         },
         {
-            "foreground": "586e75",
+            "foreground": "6c71c4",
             "token": "meta.scope.for-in-loop.shell"
         },
         {
-            "foreground": "586e75",
+            "foreground": "6c71c4",
             "token": "variable.other.loop.shell"
         },
         {
-            "foreground": "859900",
+            "foreground": "6c71c4",
             "token": "punctuation.definition.string.end.shell"
         },
         {
-            "foreground": "859900",
+            "foreground": "6c71c4",
             "token": "punctuation.definition.string.begin.shell"
         },
         {
-            "foreground": "586e75",
+            "foreground": "6c71c4",
             "token": "meta.scope.case-block.shell"
         },
         {
-            "foreground": "586e75",
+            "foreground": "6c71c4",
             "token": "meta.scope.case-body.shell"
         },
         {
@@ -872,7 +872,7 @@ export default {
             "token": "keyword.other.import.java"
         },
         {
-            "foreground": "586e75",
+            "foreground": "6c71c4",
             "token": "storage.modifier.import.java"
         },
         {
@@ -880,11 +880,11 @@ export default {
             "token": "meta.class.java storage.modifier.java"
         },
         {
-            "foreground": "586e75",
+            "foreground": "6c71c4",
             "token": "source.java comment.block"
         },
         {
-            "foreground": "586e75",
+            "foreground": "6c71c4",
             "token": "comment.block meta.documentation.tag.param.javadoc keyword.other.documentation.param.javadoc"
         },
         {
@@ -904,11 +904,11 @@ export default {
             "token": "keyword.operator.comparison.perl"
         },
         {
-            "foreground": "859900",
+            "foreground": "6c71c4",
             "token": "support.function.perl"
         },
         {
-            "foreground": "586e75",
+            "foreground": "6c71c4",
             "fontStyle": "italic",
             "token": "comment.line.number-sign.perl"
         },
@@ -953,12 +953,12 @@ export default {
             "token": "markup.heading.6.markdown"
         },
         {
-            "foreground": "839496",
+            "foreground": "e0e0e0",
             "fontStyle": "bold",
             "token": "markup.bold.markdown"
         },
         {
-            "foreground": "839496",
+            "foreground": "e0e0e0",
             "fontStyle": "italic",
             "token": "markup.italic.markdown"
         },
@@ -979,7 +979,7 @@ export default {
             "token": "markup.list.unnumbered.markdown"
         },
         {
-            "foreground": "859900",
+            "foreground": "6c71c4",
             "token": "markup.list.numbered.markdown"
         },
         {
@@ -1003,12 +1003,12 @@ export default {
             "token": "meta.separator.markdown"
         },
         {
-            "foreground": "586e75",
+            "foreground": "85b900",
             "fontStyle": "italic",
             "token": "meta.image.inline.markdown"
         },
         {
-            "foreground": "586e75",
+            "foreground": "85b900",
             "fontStyle": "italic",
             "token": "markup.underline.link.markdown"
         },
@@ -1021,23 +1021,23 @@ export default {
             "token": "string.other.link.description.markdown"
         },
         {
-            "foreground": "586e75",
+            "foreground": "85b900",
             "token": "punctuation.definition.link.markdown"
         },
         {
-            "foreground": "586e75",
+            "foreground": "85b900",
             "token": "punctuation.definition.metadata.markdown"
         },
         {
-            "foreground": "586e75",
+            "foreground": "85b900",
             "token": "punctuation.definition.string.begin.markdown"
         },
         {
-            "foreground": "586e75",
+            "foreground": "85b900",
             "token": "punctuation.definition.string.end.markdown"
         },
         {
-            "foreground": "586e75",
+            "foreground": "85b900",
             "token": "punctuation.definition.constant.markdown"
         },
         {
@@ -1055,8 +1055,8 @@ export default {
             "token": "sublimelinter.underline.illegal"
         },
         {
-            "foreground": "839496",
-            "background": "839496",
+            "foreground": "e0e0e0",
+            "background": "e0e0e0",
             "token": "sublimelinter.outline.warning"
         },
         {

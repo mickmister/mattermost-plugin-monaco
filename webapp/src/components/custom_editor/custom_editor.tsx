@@ -9,6 +9,9 @@ type Props = {
     value: string;
     onChange: (e: React.ChangeEvent) => void;
     onConfirm: (text: string) => void;
+    channelId: string;
+    rootId?: string;
+    className: string;
 }
 
 export default function CustomEditor(props: Props) {
@@ -18,14 +21,12 @@ export default function CustomEditor(props: Props) {
         contentSource: props.value,
     });
 
-    const currentChannelId = useSelector(getCurrentChannelId);
-
     useEffect(() => {
         setEditorState({
             content: props.value,
             contentSource: props.value,
         });
-    }, [currentChannelId]);
+    }, [props.channelId]);
 
     const onTextChange = (content = '') => {
         setEditorState({content});
@@ -40,12 +41,15 @@ export default function CustomEditor(props: Props) {
         props.onConfirm(text);
     }
 
+    const path = props.rootId || props.channelId;
+
     return (
         <Editor
             onTextChange={onTextChange}
             cancel={cancel}
             save={submit}
             showFullScreenButton={true}
+            path={path}
             {...props}
             {...editorState}
         />

@@ -25,6 +25,7 @@ export type EditorProps = EditorState & {
 
 export default function Editor(props: EditorProps) {
     const [dirty, setDirty] = useState(false);
+    const [savedEditor, setEditor] = useState(null);
 
     const dispatch = useDispatch();
 
@@ -39,6 +40,10 @@ export default function Editor(props: EditorProps) {
     useEffect(() => {
         setDirty(false);
     }, [props.path]);
+
+    useEffect(() => {
+        setDirty(false);
+    }, [props.save]);
 
     const showFullScreen = () => {
         dispatch(showEditorModal({
@@ -116,13 +121,14 @@ export default function Editor(props: EditorProps) {
         editor.focus();
         editor.setPosition({column: lastColumnNum, lineNumber: numLines});
 
+        setEditor(editor);
+
         editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_S, () => {
             props.save(editor.getValue());
         });
 
         editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, () => {
-            alert('should send post');
-            // props.save(editor.getValue());
+            props.save(editor.getValue());
         });
 
         // Use this to view all of the key bindings available. You can then disable them like the indent ones below we're disabling.

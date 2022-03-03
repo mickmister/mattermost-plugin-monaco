@@ -22,24 +22,28 @@ export default function CustomEditorModalInner(props: Props) {
     const [savedCodeBlockIndex, setCodeBlockIndex] = useState(-1);
     const [randomStringToResetModel, setRandomString] = useState('');
 
-    const onMarkdownTextChange = (content: string) => {
+    const onMarkdownTextChange = React.useCallback((content: string) => {
         setMarkdownEditorState({content});
         props.editorModalState.onTextChange(content);
-    }
+    }, [props.editorModalState.onTextChange]);
 
     let editor: React.ReactNode;
 
-    const getCharIndexesFromCodeBlockIndex = (codeBlockIndex: number): [number | undefined, number | undefined] => {
+    const getCharIndexesFromCodeBlockIndex = React.useCallback((codeBlockIndex: number): [number | undefined, number | undefined] => {
         const matches = Array.from(markdownEditorState.content.matchAll(/```/g));
         const indexes = matches.map(match => match.index);
         const begin = indexes[codeBlockIndex * 2];
         const end = indexes[codeBlockIndex * 2 + 1];
 
         return [begin, end];
-    }
+    }, [markdownEditorState.content]);
 
     const setCodeBlockContentInMarkdownContent = (codeBlockContent: string) => {
         const [begin, end] = getCharIndexesFromCodeBlockIndex(savedCodeBlockIndex);
+
+        if (begin === undefined || end === undefined) {
+            return;
+        }
 
         const markdownContent = markdownEditorState.content;
         const actualBegin = markdownContent.substring(begin).indexOf('\n') + begin;
@@ -51,8 +55,12 @@ export default function CustomEditorModalInner(props: Props) {
         onMarkdownTextChange(newContent);
     };
 
-    const clickedCodeBlock = (index: number) => {
+    const clickedCodeBlock = React.useCallback((index: number) => {
         const [begin, end] = getCharIndexesFromCodeBlockIndex(index);
+
+        if (begin === undefined || end == undefined) {
+            return;
+        }
 
         const markdownContent = markdownEditorState.content;
         const actualBegin = markdownContent.substring(begin).indexOf('\n') + begin;
@@ -69,17 +77,23 @@ export default function CustomEditorModalInner(props: Props) {
 
         setRandomString(makeRandomString());
         setCodeBlockIndex(index);
-    }
+    }, [markdownEditorState.content]);
+
+    const codeBlockCancel = React.useCallback(() => {
+        setCodeBlockContentInMarkdownContent(codeEditorState.contentSource);
+        setCodeBlockIndex(-1);
+        setCodeEditorState(null);
+    }, [codeEditorState.contentSource]);
+
+    const markdownCancel = React.useCallback(() => {
+        dispatch(closeEditorModal(markdownEditorState.contentSource));
+    }, [markdownEditorState.contentSource]);
 
     const showCodeBlock = savedCodeBlockIndex !== -1;
     if (showCodeBlock) {
         const editorProps: EditorProps = {
-            cancel: () => {
-                setCodeBlockContentInMarkdownContent(codeEditorState.contentSource);
-                setCodeBlockIndex(-1);
-                setCodeEditorState(null);
-            },
-            save: (text: string) => {
+            cancel: codeBlockCancel,
+            save: () => {
                 setCodeBlockIndex(-1);
                 setCodeEditorState(null);
             },
@@ -99,8 +113,10 @@ export default function CustomEditorModalInner(props: Props) {
         );
     } else {
         const editorProps: EditorProps = {
-            cancel: () => dispatch(closeEditorModal(markdownEditorState.contentSource)),
-            save: (text: string) => dispatch(closeEditorModal(text)),
+            cancel: markdownCancel,
+            save: (text: string) => {
+                dispatch(closeEditorModal(text));
+            },
             showFullScreenButton: false,
             onTextChange: (content: string) => onMarkdownTextChange(content),
             ...markdownEditorState,

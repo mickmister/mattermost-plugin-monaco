@@ -1,9 +1,7 @@
 import React, {useEffect} from 'react';
-import {useSelector} from 'react-redux';
-
-import {getCurrentChannelId} from 'mattermost-redux/selectors/entities/common';
 
 import Editor, {useEditorState} from 'components/editor/editor';
+import CustomEditorModalInner from 'components/custom_editor_modal/custom_editor_modal_inner';
 
 type Props = {
     value: string;
@@ -28,30 +26,17 @@ export default function CustomEditor(props: Props) {
         });
     }, [props.channelId]);
 
-    const onTextChange = (content = '') => {
+    const onTextChange = React.useCallback((content = '') => {
         setEditorState({content});
         props.onChange({target: {value: content}} as any);
-    };
-
-    const cancel = () => {
-        props.onConfirm(editorState.contentSource);
-    };
-
-    const submit = (text: string) => {
-        props.onConfirm(text);
-    }
-
-    const path = props.rootId || props.channelId;
+    }, [setEditorState, props.onChange]);
 
     return (
-        <Editor
-            onTextChange={onTextChange}
-            cancel={cancel}
-            save={submit}
-            showFullScreenButton={true}
-            path={path}
-            {...props}
-            {...editorState}
+        <CustomEditorModalInner
+            editorModalState={{
+                editorState,
+                onTextChange,
+            }}
         />
-    )
+    );
 }

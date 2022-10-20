@@ -17,10 +17,13 @@ import {registerThemes} from 'themes/themes';
 
 export type EditorProps = EditorState & {
     save: (content: string) => void;
-    cancel: () => void;
+    confirmText?: string;
+    cancel?: () => void;
     onTextChange: (content: string) => void;
+    onEditorDidMount?: (editor: any, monaco: any) => void;
     showFullScreenButton: boolean;
     path?: string;
+    editorHeight?: string;
 }
 
 export default function Editor(props: EditorProps) {
@@ -64,7 +67,9 @@ export default function Editor(props: EditorProps) {
         margin: '5px',
     };
 
-    const save = () => props.save(props.content);
+    const save = React.useCallback((value?: string) => {
+        props.save(value || props.content);
+    }, [props.content, props.save]);
 
     const cancel = () => {
         if (dirty) {
@@ -73,7 +78,7 @@ export default function Editor(props: EditorProps) {
             }
         }
 
-        props.cancel();
+        props.cancel?.();
     }
 
     const buttons = (
@@ -84,16 +89,18 @@ export default function Editor(props: EditorProps) {
                 onClick={save}
                 style={buttonStyle}
             >
-                {'Save'}
+                {props.confirmText || 'Save'}
             </button>
-            <button
-                type='button'
-                className='btn btn-primary comment-btn'
-                onClick={cancel}
-                style={buttonStyle}
-            >
-                {'Cancel'}
-            </button>
+            {props.cancel && (
+                <button
+                    type='button'
+                    className='btn btn-primary comment-btn'
+                    onClick={cancel}
+                    style={buttonStyle}
+                >
+                    {'Cancel'}
+                </button>
+            )}
             {props.showFullScreenButton && (
                 <button
                     type='button'
@@ -112,7 +119,7 @@ export default function Editor(props: EditorProps) {
         registerAutocomplete(monaco);
     }
 
-    const handleEditorDidMount = (editor: any, monaco: any) => {
+    const handleEditorDidMount = React.useCallback((editor: any, monaco: any) => {
         const lines = props.content.split('\n');
         const numLines = lines.length;
         const lastLine = lines[numLines - 1];
@@ -124,11 +131,11 @@ export default function Editor(props: EditorProps) {
         setEditor(editor);
 
         editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_S, () => {
-            props.save(editor.getValue());
+            save(editor.getValue());
         });
 
         editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, () => {
-            props.save(editor.getValue());
+            save(editor.getValue());
         });
 
         // Use this to view all of the key bindings available. You can then disable them like the indent ones below we're disabling.
@@ -138,15 +145,17 @@ export default function Editor(props: EditorProps) {
         editor._standaloneKeybindingService.addDynamicKeybinding('-editor.action.indentLines', null, () => {});
         editor._standaloneKeybindingService.addDynamicKeybinding('-editor.action.outdentLines', null, () => {});
 
+        props.onEditorDidMount?.(editor, monaco);
+
         window.myMonaco = monaco;
         window.myEditor = editor;
-    };
+    }, [props.save, props.onEditorDidMount]);
 
     const onChange = (text?: string) => {
         props.onTextChange(text || '');
     };
 
-    const editorHeight = getEditorHeight(props.content);
+    const editorHeight = props.editorHeight || getEditorHeight(props.content);
     const monacoEditor = (
         <MonacoEditor
             height={editorHeight}
@@ -219,3 +228,5 @@ const getEditorHeight = (content: string): string => {
     editorHeight = Math.min(maxHeight, editorHeight);
     return editorHeight + 'px';
 }
+
+window.MonacoEditor = Editor;

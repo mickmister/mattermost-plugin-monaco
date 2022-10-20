@@ -30,7 +30,7 @@ export default class Plugin {
 
         registry.registerRootComponent(CustomEditorModal);
 
-        registry.registerCustomEditorComponent(
+        registry.registerCustomEditorComponent?.(
             'Code',
             CustomEditor,
         );
